@@ -26,7 +26,7 @@
 
 ---
 
-#### Basic stack: NodeJS/Express/Websocket
+#### Basic stack: NodeJS/Express/Websocket/REST API
 
 ---
 
