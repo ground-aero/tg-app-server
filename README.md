@@ -27,3 +27,11 @@
 ---
 
 #### Basic stack: NodeJS/Express/Websocket
+
+---
+
+![img-1](/images/startMenu.png)  
+
+---
+
+![img-1](/images/chatWindow.png)
