@@ -74,7 +74,7 @@ const start = async () => {
       return bot.sendMessage(chatId, `Добро пожаловать в чат TgGroundBot. Выберите пункт меню ниже:`, {
         reply_markup: {
           inline_keyboard: [
-            [{text: 'Открыть окно', web_app: {url: webAppUrl}} ],
+            [{text: 'Открыть окно приложения', web_app: {url: webAppUrl}} ],
           ]}
         });
     }
