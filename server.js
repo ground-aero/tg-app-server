@@ -10,7 +10,7 @@ const { PORT, TELEGRAM_BOT_TOKEN, WEATHER_API_KEY } = require('./config');
 
 const app = express();
 const corsOptions = {
-  origin: ['https://tg-app-client.netlify.app', 'https://my-server-domain.com'],
+  origin: ['https://tg-app-client.netlify.app', 'https://tg-app-online.ru'],
   optionsSuccessStatus: 200
 };
 app.use(cors(corsOptions))
