@@ -4,18 +4,25 @@ const http = require('http');
 const WebSocket = require('ws');
 const cors = require('cors')
 const axios = require('axios');
-const { JWT_SECRET } = require('./config');
+const events = require('events');
+const emitter = new events.EventEmitter();
+const { PORT, TELEGRAM_BOT_TOKEN, WEATHER_API_KEY } = require('./config');
 
 const app = express();
-app.use(cors())
+const corsOptions = {
+  origin: ['https://tg-app-client.netlify.app', 'https://my-server-domain.com'],
+  optionsSuccessStatus: 200
+};
+app.use(cors(corsOptions))
 app.use(express.json());
 
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
 
-const bot = new TelegramBot(JWT_SECRET, { polling: true });
+const bot = new TelegramBot(TELEGRAM_BOT_TOKEN, { polling: true });
+ console.log(`process.env`, process.env);
+ console.log(`TELEGRAM_BOT_TOKEN`, TELEGRAM_BOT_TOKEN);
 
-const WEATHER_API_KEY = 'd3db6cbce06f4567aa0162457240709';
 const webAppUrl = 'https://tg-app-client.netlify.app'
 
 // Хендлер соединения WebSocket
@@ -128,6 +135,19 @@ const start = async () => {
 
 start();
 
+// Всем участникам чата возвращается ответ, что был создан новый чат
+app.get('/get-messages', (req, res) => {
+  emitter.once('newMessage', (message) => {
+      res.json(message)
+  })
+})
+
+app.post('/new-messages', (req, res) => {
+  const message = req.body;
+
+  emitter.emit('newMessage', message)
+  res.status(200)
+})
 
 // Weather API route
 app.get('/api/weather', async (req, res) => {
@@ -150,10 +170,5 @@ app.get('/api/forecast', async (req, res) => {
   }
 });
 
-
-const PORT = process.env.PORT || 4000
+// Эта строка позволяет и HTTP-серверу, и WebSocket-серверу слушать один порт
 server.listen(PORT, () => { console.log(`Server is running on port ${PORT}`) });
-
-// server.listen(8000, () => {
-//   console.log('Server is running on port 8000'); //8000
-// });
