@@ -10,6 +10,7 @@
 ToDo.txt
 Readme.txt
 .env
+passport_nginx_config.txt
 
 # testing
 /coverage

@@ -9,11 +9,12 @@ const emitter = new events.EventEmitter();
 const { PORT, TELEGRAM_BOT_TOKEN, WEATHER_API_KEY } = require('./config');
 
 const app = express();
-const corsOptions = {
-  origin: ['https://tg-app-client.netlify.app', 'https://tg-app-online.ru'],
-  optionsSuccessStatus: 200
-};
-app.use(cors(corsOptions))
+// const corsOptions = {
+//   origin: ['https://tg-app-client.netlify.app', 'https://tg-app-online.ru'],
+//   optionsSuccessStatus: 200
+// };
+// app.use(cors(corsOptions))
+app.use(cors());
 app.use(express.json());
 
 const server = http.createServer(app);
