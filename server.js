@@ -24,8 +24,8 @@ app.use(express.json());
 
 const server = http.createServer(app);
 // WebSocket server configuration
-const wss = new WebSocket.Server({ server });
-// const wss = new WebSocket.Server({ server, path: '/ws' }); // Specify a path for WebSocket connections
+// const wss = new WebSocket.Server({ server });
+const wss = new WebSocket.Server({ server, path: '/ws' }); // Specify a path for WebSocket connections
 
 const bot = new TelegramBot(TELEGRAM_BOT_TOKEN, { polling: true });
 
