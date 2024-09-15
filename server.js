@@ -9,32 +9,47 @@ const emitter = new events.EventEmitter();
 const { PORT, TELEGRAM_BOT_TOKEN, WEATHER_API_KEY } = require('./config');
 
 const app = express();
-// const corsOptions = {
-//   origin: ['https://tg-app-client.netlify.app', 'https://tg-app-online.ru'],
-//   optionsSuccessStatus: 200
-// };
-// app.use(cors(corsOptions))
-app.use(cors());
+const corsOptions = {
+  origin: ['https://tg-app-client.netlify.app', 'http://tg-app-online.ru', 'https://tg-app-online.ru', 'ws://tg-app-online.ru', 'wss://tg-app-online.ru', 'http://localhost:3000', 'http://localhost:4000', 'ws://localhost:4000', 'wss://localhost:4000'],
+  methods: ['GET', 'POST', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true,
+  optionsSuccessStatus: 200
+};
+
+app.use(cors(corsOptions));
+// app.use(cors());
 app.use(express.json());
 
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
 
 const bot = new TelegramBot(TELEGRAM_BOT_TOKEN, { polling: true });
- console.log(`process.env`, process.env);
- console.log(`TELEGRAM_BOT_TOKEN`, TELEGRAM_BOT_TOKEN);
+//  console.log(`process.env`, process.env);
+//  console.log(`TELEGRAM_BOT_TOKEN`, TELEGRAM_BOT_TOKEN);
 
 const webAppUrl = 'https://tg-app-client.netlify.app'
 
 // Хендлер соединения WebSocket
 wss.on('connection', (ws) => {
   console.log('New WebSocket connection');
+  ws.on('error', (error) => {
+    console.error('WebSocket error:', error);
+  });
   
   ws.on('message', (message) => {
     console.log('Received:', message);
+
+    // Преобразуем сообщение в строку, если оно в бинарном формате
+    const stringMessage = message instanceof Buffer ? message.toString() : message;
+
+    // Отправляем сообщение всем клиентам, включая отправителя
     wss.clients.forEach((client) => {
-      if (client !== ws && client.readyState === WebSocket.OPEN) {
-        client.send(message);
+      // if (client !== ws && client.readyState === WebSocket.OPEN) { //  исключая отправителя
+      //   client.send(message);
+      // }
+      if (client.readyState === WebSocket.OPEN) {
+        client.send(stringMessage);
       }
     });
   });
@@ -57,10 +72,11 @@ const menuOptions = {
 
 bot.setMyCommands([
   // {command:'/start', description: `Подключение к App 'TgGroundBot'`},
-  {command:'/chat', description: `Открыть чат`},
-  {command:'/weather', description: `Инфо о погоде`},
-  {command:'/forecast', description: `Прогноз погоды`},
-  {command:'/info', description: `Инфо о пользователе`},
+  // {command:'/chat', description: `Открыть чат`},
+  // {command:'/weather', description: `Инфо о погоде`},
+  // {command:'/forecast', description: `Прогноз погоды`},
+  {command:'/info', description: `Инфо о приложении`},
+  // {command:'/open', description: `Открыть сервисы приложения`},
 ])
 
 
@@ -68,7 +84,6 @@ bot.setMyCommands([
 const start = async () => {
   try {
   //  await bot.sendMessage(process.env.TELEGRAM_CHAT_ID, `Привет, ${process.env.TELEGRAM_CHAT_NAME}!`);
-
   await bot.on('message', msg => {
     const chatId = msg.chat.id;
     const text = msg.text;
@@ -79,42 +94,43 @@ const start = async () => {
     //   return bot.sendMessage(chatId, `Добро пожаловать в чат TgGroundBot. Выберите пункт меню ниже в панели:`, menuOptions);
     // }
     if (text === '/start') {
-      return bot.sendMessage(chatId, `Добро пожаловать в чат TgGroundBot. Выберите пункт меню ниже:`, {
+      return bot.sendMessage(chatId, `Добро пожаловать в приложение "TgGroundBot". \n Выберите пункт меню ниже:`, {
         reply_markup: {
           inline_keyboard: [
+            [{text: 'Информация о приложени', callback_data: '/info'} ],
             [{text: 'Открыть окно приложения', web_app: {url: webAppUrl}} ],
           ]}
         });
     }
 
-    if (text === '/chat') {
-      return bot.sendMessage(chatId, `Открыть чат`, {
-        reply_markup: {
-          inline_keyboard: [
-            [{text: 'Чат', web_app: {url: webAppUrl}} ],
-          ]}
-        });
-    }
-    if (text === '/weather') {
-      return bot.sendMessage(chatId, `Открыть погоду`, {
-        reply_markup: {
-          inline_keyboard: [
-            [{text: 'Погода0', web_app: {url: webAppUrl }} ],
-          ]}
-        });
-    }
-    if (text === '/forecast') {
-      return bot.sendMessage(chatId, `Открыть прогноз`, {
-        reply_markup: {
-          inline_keyboard: [
-            [{text: 'Прогноз', web_app: {url: webAppUrl }} ],
-          ]}
-        });
+    if (text === '/info') {
+      return bot.sendMessage(chatId, `имя пользователя: ${msg.from.first_name} ${msg.from.last_name}. \n Сервисы приложения: \n 1. Чат \n 2. Погода \n 3. Прогноз погоды`);
     }
 
-    if (text === '/info') {
-      return bot.sendMessage(chatId, `${msg.from.first_name} ${msg.from.last_name}`, menuOptions);
-    }
+    // if (text === '/chat') {
+    //   return bot.sendMessage(chatId, `Открыть чат`, {
+    //     reply_markup: {
+    //       inline_keyboard: [
+    //         [{text: 'Чат', web_app: {url: webAppUrl}} ],
+    //       ]}
+    //     });
+    // }
+    // if (text === '/weather') {
+    //   return bot.sendMessage(chatId, `Открыть погоду`, {
+    //     reply_markup: {
+    //       inline_keyboard: [
+    //         [{text: 'Погода0', web_app: {url: webAppUrl }} ],
+    //       ]}
+    //     });
+    // }
+    // if (text === '/forecast') {
+    //   return bot.sendMessage(chatId, `Открыть прогноз`, {
+    //     reply_markup: {
+    //       inline_keyboard: [
+    //         [{text: 'Прогноз', web_app: {url: webAppUrl }} ],
+    //       ]}
+    //     });
+    // }
   
     // отправляем в чат уведомление о получении их сообщения
     return bot.sendMessage(chatId, `Я вас не понял, попробуйте еще раз!`); // ОТПРАВЛЯЕМ СООБЩ В ТЕЛЕГУ
@@ -125,7 +141,17 @@ const start = async () => {
     const data = msg.data
     const chatId = msg.message.chat.id;
 
-    bot.sendMessage(chatId, `Выбран пункт меню: ${data}`, menuOptions);
+    // bot.sendMessage(chatId, `Выбран пункт меню: ${data}`, menuOptions);
+    // bot.sendMessage(chatId, `Выбран пункт меню: ${data}`);
+
+    if (data === '/info') {
+      return bot.sendMessage(chatId, `имя пользователя: ${msg.from.first_name} ${msg.from.last_name}. \n Сервисы приложения: \n 1. Чат \n 2. Погода \n 3. Прогноз погоды`, {
+        reply_markup: {
+        inline_keyboard: [
+          [{text: 'Открыть окно приложения', web_app: {url: webAppUrl}} ],
+        ]}
+      });
+    }
   })
 
 
@@ -137,17 +163,17 @@ const start = async () => {
 start();
 
 // Всем участникам чата возвращается ответ, что был создан новый чат
-app.get('/get-messages', (req, res) => {
-  emitter.once('newMessage', (message) => {
-      res.json(message)
-  })
-})
-
 app.post('/new-messages', (req, res) => {
   const message = req.body;
 
   emitter.emit('newMessage', message)
   res.status(200)
+})
+
+app.get('/get-messages', (req, res) => {
+  emitter.once('newMessage', (message) => {
+      res.json(message)
+  })
 })
 
 // Weather API route
