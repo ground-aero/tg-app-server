@@ -9,6 +9,7 @@ const emitter = new events.EventEmitter();
 const { PORT, TELEGRAM_BOT_TOKEN, WEATHER_API_KEY } = require('./config');
 
 const app = express();
+
 const corsOptions = {
   origin: ['https://tg-app-client.netlify.app', 'http://tg-app-online.ru', 'https://tg-app-online.ru', 'ws://tg-app-online.ru', 'wss://tg-app-online.ru', 'http://localhost:3000', 'http://localhost:4000', 'ws://localhost:4000', 'wss://localhost:4000'],
   methods: ['GET', 'POST', 'OPTIONS'],
@@ -18,15 +19,12 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
-// app.use(cors());
 app.use(express.json());
 
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
 
 const bot = new TelegramBot(TELEGRAM_BOT_TOKEN, { polling: true });
-//  console.log(`process.env`, process.env);
-//  console.log(`TELEGRAM_BOT_TOKEN`, TELEGRAM_BOT_TOKEN);
 
 const webAppUrl = 'https://tg-app-client.netlify.app'
 
@@ -106,34 +104,9 @@ const start = async () => {
     if (text === '/info') {
       return bot.sendMessage(chatId, `имя пользователя: ${msg.from.first_name} ${msg.from.last_name}. \n Сервисы приложения: \n 1. Чат \n 2. Погода \n 3. Прогноз погоды`);
     }
-
-    // if (text === '/chat') {
-    //   return bot.sendMessage(chatId, `Открыть чат`, {
-    //     reply_markup: {
-    //       inline_keyboard: [
-    //         [{text: 'Чат', web_app: {url: webAppUrl}} ],
-    //       ]}
-    //     });
-    // }
-    // if (text === '/weather') {
-    //   return bot.sendMessage(chatId, `Открыть погоду`, {
-    //     reply_markup: {
-    //       inline_keyboard: [
-    //         [{text: 'Погода0', web_app: {url: webAppUrl }} ],
-    //       ]}
-    //     });
-    // }
-    // if (text === '/forecast') {
-    //   return bot.sendMessage(chatId, `Открыть прогноз`, {
-    //     reply_markup: {
-    //       inline_keyboard: [
-    //         [{text: 'Прогноз', web_app: {url: webAppUrl }} ],
-    //       ]}
-    //     });
-    // }
   
-    // отправляем в чат уведомление о получении их сообщения
-    return bot.sendMessage(chatId, `Я вас не понял, попробуйте еще раз!`); // ОТПРАВЛЯЕМ СООБЩ В ТЕЛЕГУ
+    // отправляем в тг-чат уведомление о получении их сообщения
+    return bot.sendMessage(chatId, `Я вас не понял, попробуйте еще раз!`);
   });
 
 
@@ -142,7 +115,6 @@ const start = async () => {
     const chatId = msg.message.chat.id;
 
     // bot.sendMessage(chatId, `Выбран пункт меню: ${data}`, menuOptions);
-    // bot.sendMessage(chatId, `Выбран пункт меню: ${data}`);
 
     if (data === '/info') {
       return bot.sendMessage(chatId, `имя пользователя: ${msg.from.first_name} ${msg.from.last_name}. \n Сервисы приложения: \n 1. Чат \n 2. Погода \n 3. Прогноз погоды`, {
@@ -162,7 +134,7 @@ const start = async () => {
 
 start();
 
-// Всем участникам чата возвращается ответ, что был создан новый чат
+// Всем участникам чата возвращаем ответ, что был создан новый чат
 app.post('/new-messages', (req, res) => {
   const message = req.body;
 
@@ -197,5 +169,5 @@ app.get('/api/forecast', async (req, res) => {
   }
 });
 
-// Эта строка позволяет и HTTP-серверу, и WebSocket-серверу слушать один порт
+// позволяем и HTTP-серверу, и WebSocket-серверу слушать один порт
 server.listen(PORT, () => { console.log(`Server is running on port ${PORT}`) });
