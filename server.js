@@ -1,7 +1,6 @@
 const TelegramBot = require('node-telegram-bot-api');
 const express = require('express');
 const http = require('http');
-const https = require('https');
 const WebSocket = require('ws');
 const cors = require('cors')
 const axios = require('axios');
@@ -23,8 +22,7 @@ app.use(cors(corsOptions));
 // app.use(cors())
 app.use(express.json());
 
-// const server = http.createServer(app);
-const server = https.createServer(app);
+const server = http.createServer(app);
 // WebSocket server configuration
 const wss = new WebSocket.Server({ server });
 // const wss = new WebSocket.Server({ server, path: '/ws' }); // Specify a path for WebSocket connections
