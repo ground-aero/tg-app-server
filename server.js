@@ -1,6 +1,7 @@
 const TelegramBot = require('node-telegram-bot-api');
 const express = require('express');
 const http = require('http');
+const https = require('https');
 const WebSocket = require('ws');
 const cors = require('cors')
 const axios = require('axios');
@@ -22,7 +23,8 @@ app.use(cors(corsOptions));
 // app.use(cors())
 app.use(express.json());
 
-const server = http.createServer(app);
+// const server = http.createServer(app);
+const server = https.createServer(app);
 // WebSocket server configuration
 const wss = new WebSocket.Server({ server });
 // const wss = new WebSocket.Server({ server, path: '/ws' }); // Specify a path for WebSocket connections
@@ -95,7 +97,7 @@ const start = async () => {
     //   return bot.sendMessage(chatId, `Добро пожаловать в чат TgGroundBot. Выберите пункт меню ниже в панели:`, menuOptions);
     // }
     if (text === '/start') {
-      return bot.sendMessage(chatId, `Добро пожаловать в приложение "TgGroundBot". \n Выберите пункт меню ниже:`, {
+      return bot.sendMessage(chatId, `Привет ${msg.from.first_name} ${msg.from.last_name} 👋 \n Выберите пункт меню ниже:`, {
         reply_markup: {
           inline_keyboard: [
             [{text: 'Информация о приложени', callback_data: '/info'} ],

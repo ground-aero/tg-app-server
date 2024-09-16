@@ -12,6 +12,10 @@
  - дополнительно можно открыть окна приложения через кнопку меню в нижней панели приложения
 
  ```
+ Telegram Bot API: 'node-telegram-bot-api'  
+
+ Weather service API address: https://api.weatherapi.com/  
+ 
  Endpoints:
  /api/weather - запрос текущей погоды  
  /api/forecast - запрос прогноза погоды
@@ -26,7 +30,7 @@
 
 ---
 
-#### Basic stack: NodeJS/Express/Websocket/REST API
+##### Basic stack: NodeJS, Express, Websocket, Telegram App Library, REST API; DevOps: Nginx, SSL
 
 ---
 
