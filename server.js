@@ -77,6 +77,7 @@ bot.setMyCommands([
   // {command:'/weather', description: `Инфо о погоде`},
   // {command:'/forecast', description: `Прогноз погоды`},
   {command:'/info', description: `Инфо о приложении`},
+  {command:'/start', description: `Открыть окно приложения`},
   // {command:'/open', description: `Открыть сервисы приложения`},
 ])
 
@@ -105,7 +106,12 @@ const start = async () => {
     }
 
     if (text === '/info') {
-      return bot.sendMessage(chatId, `имя пользователя: ${msg.from.first_name} ${msg.from.last_name}. \n Сервисы приложения: \n 1. Чат \n 2. Погода \n 3. Прогноз погоды`);
+      return bot.sendMessage(chatId, `Сервисы приложения: \n 1. Чат \n 2. Погода \n 3. Прогноз погоды`, {
+        reply_markup: {
+          inline_keyboard: [
+            [{text: 'Открыть окно приложения', web_app: {url: webAppUrl}} ],
+          ]}
+      });
     }
   
     // отправляем в тг-чат уведомление о получении их сообщения
@@ -120,7 +126,7 @@ const start = async () => {
     // bot.sendMessage(chatId, `Выбран пункт меню: ${data}`, menuOptions);
 
     if (data === '/info') {
-      return bot.sendMessage(chatId, `имя пользователя: ${msg.from.first_name} ${msg.from.last_name}. \n Сервисы приложения: \n 1. Чат \n 2. Погода \n 3. Прогноз погоды`, {
+      return bot.sendMessage(chatId, `Сервисы приложения: \n 1. Чат \n 2. Погода \n 3. Прогноз погоды`, {
         reply_markup: {
         inline_keyboard: [
           [{text: 'Открыть окно приложения', web_app: {url: webAppUrl}} ],
