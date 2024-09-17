@@ -100,7 +100,7 @@ const start = async () => {
         reply_markup: {
           inline_keyboard: [
             [{text: 'Информация о приложени', callback_data: '/info'} ],
-            [{text: 'Открыть окно приложения', web_app: {url: webAppUrl}} ],
+            [{text: 'Открыть Меню приложения', web_app: {url: webAppUrl}} ],
           ]}
         });
     }
