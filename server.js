@@ -11,7 +11,7 @@ const { PORT, TELEGRAM_BOT_TOKEN, WEATHER_API_KEY } = require('./config');
 const app = express();
 
 const corsOptions = {
-  origin: ['https://tg-app-client.netlify.app', 'http://tg-app-online.ru', 'https://tg-app-online.ru', 'ws://tg-app-online.ru', 'wss://tg-app-online.ru', 'wss://tg-app-online.ru/ws', 'http://localhost:3000', 'http://localhost:4000', 'ws://localhost:4000', 'wss://localhost:4000', 'https://t.me'],
+  origin: ['https://tg-app-client.netlify.app', 'https://tg-app-online.ru', 'ws://tg-app-online.ru', 'wss://tg-app-online.ru', 'wss://tg-app-online.ru/ws', 'http://localhost:3000', 'http://localhost:4000', 'ws://localhost:4000', 'wss://localhost:4000', 'https://t.me'],
   methods: ['GET', 'POST', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
@@ -23,7 +23,7 @@ app.use(cors(corsOptions));
 app.use(express.json());
 
 const server = http.createServer(app);
-// WebSocket server configuration
+// WebSocket server config
 const wss = new WebSocket.Server({ server });
 // const wss = new WebSocket.Server({ server, path: '/ws' }); // Specify a path for WebSocket connections
 
@@ -72,13 +72,8 @@ const menuOptions = {
 }
 
 bot.setMyCommands([
-  // {command:'/start', description: `Подключение к App 'TgGroundBot'`},
-  // {command:'/chat', description: `Открыть чат`},
-  // {command:'/weather', description: `Инфо о погоде`},
-  // {command:'/forecast', description: `Прогноз погоды`},
   {command:'/info', description: `Инфо о приложении`},
-  {command:'/start', description: `Открыть Меню приложения`},
-  // {command:'/open', description: `Открыть сервисы приложения`},
+  {command:'/start', description: `Меню приложения`},
 ])
 
 
