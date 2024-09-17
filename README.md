@@ -25,14 +25,13 @@
  ```
 
 
+#### Basic stack: NodeJS, Express, Websocket, Telegram App Library, REST API; DevOps: Nginx, SSL
+
+
 ---
 Дополнительно.  
 Фронтэнд часть-1 приложения развернута по адресу: [ttps://tg-app-client.netlify.app/](ttps://tg-app-client.netlify.app/)  
 Адрес репозитория: [https://github.com/ground-aero/tg-app-client](https://github.com/ground-aero/tg-app-client)  
-
----
-
-##### Basic stack: NodeJS, Express, Websocket, Telegram App Library, REST API; DevOps: Nginx, SSL
 
 ---
 
