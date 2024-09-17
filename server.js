@@ -77,7 +77,7 @@ bot.setMyCommands([
   // {command:'/weather', description: `Инфо о погоде`},
   // {command:'/forecast', description: `Прогноз погоды`},
   {command:'/info', description: `Инфо о приложении`},
-  {command:'/start', description: `Открыть окно приложения`},
+  {command:'/start', description: `Открыть Меню приложения`},
   // {command:'/open', description: `Открыть сервисы приложения`},
 ])
 
@@ -100,7 +100,7 @@ const start = async () => {
         reply_markup: {
           inline_keyboard: [
             [{text: 'Информация о приложени', callback_data: '/info'} ],
-            [{text: 'Открыть Меню приложения', web_app: {url: webAppUrl}} ],
+            [{text: 'Открыть окно приложения', web_app: {url: webAppUrl}} ],
           ]}
         });
     }
