@@ -154,10 +154,10 @@ app.get('/get-messages', (req, res) => {
 
 // Weather API route
 app.get('/api/weather', async (req, res) => {
-  const { location } = req.query;
+  const { city } = req.query;
   try {
     // const response = await axios.get(`http://api.weatherapi.com/v1/current.json?key=${WEATHER_API_KEY}&q=Moscow`);
-    const response = await axios.get(`http://api.weatherapi.com/v1/current.json?key=${WEATHER_API_KEY}&q=${location}`);
+    const response = await axios.get(`http://api.weatherapi.com/v1/current.json?key=${WEATHER_API_KEY}&q=${city}`);
     res.json(response.data);
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch weather data' });
