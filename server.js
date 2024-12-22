@@ -13,21 +13,26 @@ const app = express();
 const corsOptions = {
   origin: ['https://tg-app-client.netlify.app', 'https://tg-app-online.ru', 'ws://tg-app-online.ru', 'wss://tg-app-online.ru', 'wss://tg-app-online.ru/ws', 'http://localhost:3000', 'http://localhost:3001/', 'http://localhost:4000', 'ws://localhost:4000', 'wss://localhost:4000', 'https://t.me'],
   methods: ['GET', 'POST', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
+  allowedHeaders: ['Content-Type', 'Accept', 'Authorization'],
+  exposedHeaders: ['Content-Type'],
   credentials: true,
   optionsSuccessStatus: 200
 };
 app.use(cors(corsOptions));
+// app.use(cors())
+app.options('*', (req, res) => {
+  res.sendStatus(200);
+});
 app.use(express.json());
 
 const server = http.createServer(app);
-const webAppUrl = 'https://tg-app-client.netlify.app'
-
 // WebSocket server config
 const wss = new WebSocket.Server({ server });
 // const wss = new WebSocket.Server({ server, path: '/ws' }); // Specify a path for WebSocket connections
 
 const bot = new TelegramBot(TELEGRAM_BOT_TOKEN, { polling: true });
+
+const webAppUrl = 'https://tg-app-client.netlify.app'
 
 // Хендлер соединения WebSocket
 wss.on('connection', (ws) => {
