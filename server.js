@@ -11,25 +11,23 @@ const { PORT, TELEGRAM_BOT_TOKEN, WEATHER_API_KEY } = require('./config');
 const app = express();
 
 const corsOptions = {
-  origin: ['https://tg-app-client.netlify.app', 'https://tg-app-online.ru', 'ws://tg-app-online.ru', 'wss://tg-app-online.ru', 'wss://tg-app-online.ru/ws', 'http://localhost:3000', 'http://localhost:4000', 'ws://localhost:4000', 'wss://localhost:4000', 'https://t.me'],
+  origin: ['https://tg-app-client.netlify.app', 'https://tg-app-online.ru', 'ws://tg-app-online.ru', 'wss://tg-app-online.ru', 'wss://tg-app-online.ru/ws', 'http://localhost:3000', 'http://localhost:3001/', 'http://localhost:4000', 'ws://localhost:4000', 'wss://localhost:4000', 'https://t.me'],
   methods: ['GET', 'POST', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
   optionsSuccessStatus: 200
 };
-
 app.use(cors(corsOptions));
-// app.use(cors())
 app.use(express.json());
 
 const server = http.createServer(app);
+const webAppUrl = 'https://tg-app-client.netlify.app'
+
 // WebSocket server config
 const wss = new WebSocket.Server({ server });
 // const wss = new WebSocket.Server({ server, path: '/ws' }); // Specify a path for WebSocket connections
 
 const bot = new TelegramBot(TELEGRAM_BOT_TOKEN, { polling: true });
-
-const webAppUrl = 'https://tg-app-client.netlify.app'
 
 // Хендлер соединения WebSocket
 wss.on('connection', (ws) => {
@@ -42,7 +40,7 @@ wss.on('connection', (ws) => {
     console.log('Received:', message);
 
     // Преобразуем сообщение в строку, если оно в бинарном формате
-    const stringMessage = message instanceof Buffer ? message.toString() : message;
+    const stringMessage = message instanceof Buffer ? message.text.toString() : message.text;
 
     // Отправляем сообщение всем клиентам, включая отправителя
     wss.clients.forEach((client) => {
@@ -77,7 +75,7 @@ bot.setMyCommands([
 ])
 
 
-// ф-ция по запуску приложения
+// запуск приложения
 const start = async () => {
   try {
   //  await bot.sendMessage(process.env.TELEGRAM_CHAT_ID, `Привет, ${process.env.TELEGRAM_CHAT_NAME}!`);
@@ -110,7 +108,7 @@ const start = async () => {
     }
   
     // отправляем в тг-чат уведомление о получении их сообщения
-    return bot.sendMessage(chatId, `Я вас не понял, попробуйте еще раз!`);
+    return bot.sendMessage(chatId, `Я вас не понял, попробуйте поменять запрос!`);
   });
 
 
@@ -156,8 +154,8 @@ app.get('/get-messages', (req, res) => {
 app.get('/api/weather', async (req, res) => {
   const { city } = req.query;
   try {
-    // const response = await axios.get(`http://api.weatherapi.com/v1/current.json?key=${WEATHER_API_KEY}&q=Moscow`);
     const response = await axios.get(`http://api.weatherapi.com/v1/current.json?key=${WEATHER_API_KEY}&q=${city}`);
+
     res.json(response.data);
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch weather data' });
@@ -175,5 +173,5 @@ app.get('/api/forecast', async (req, res) => {
   }
 });
 
-// позволяем и HTTP-серверу, и WebSocket-серверу слушать один порт
+// и HTTP-сервер, и WebSocket-сервер слушают один порт
 server.listen(PORT, () => { console.log(`Server is running on port ${PORT}`) });
