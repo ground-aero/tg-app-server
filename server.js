@@ -31,7 +31,6 @@ const corsOptions = {
   optionsSuccessStatus: 200,
 };
 app.use(cors(corsOptions));
-// app.use(cors())
 app.options("*", (req, res) => {
   res.sendStatus(200);
 });
@@ -39,20 +38,28 @@ app.use(express.json());
 
 const server = http.createServer(app);
 // WebSocket server config
-const wss = new WebSocket.Server({ server });
-// const wss = new WebSocket.Server({ server, path: '/ws' }); // Specify a path for WebSocket connections
+const wss = new WebSocket.Server({ server }); // const wss = new WebSocket.Server({ server, path: '/ws' }); // Specify a path for WebSocket connections
+
+// функция пинга для проверки соединений
+function heartbeat() {
+  this.isAlive = true;
+}
 
 const bot = new TelegramBot(TELEGRAM_BOT_TOKEN, { polling: true });
-
 const webAppUrl = "https://tg-app-client.netlify.app";
 
 // Хендлер соединения WebSocket
 wss.on("connection", (ws) => {
-    // Добавляем идентификатор для каждого соединения
-    ws.id = Math.random().toString(36).substring(7);
 
-  console.log("New WebSocket connection ws.id:", ws.id);
-  
+  // Добавляем идентификатор для каждого соединения
+  ws.id = Math.random().toString(36).substring(7);
+
+  ws.isAlive = true; // установка начального состояния
+  ws.on('pong', heartbeat); // Обработчик ответа на пинг
+
+  // Отправляем приветственное сообщение для подтверждения соединения
+  ws.send(JSON.stringify({ type: 'connection', message: 'Connected successfully' }));
+
   ws.on("error", (error) => {
     console.error("WebSocket error:", error);
   });
@@ -81,8 +88,27 @@ wss.on("connection", (ws) => {
   });
 
   ws.on("close", () => {
-    console.log("WebSocket connection closed");
+      console.log(`WebSocket connection closed for id: ${ws.id}`);
   });
+
+});
+
+// интервал проверки соединений
+const interval = setInterval(() => {
+  wss.clients.forEach((ws) => {
+      if (ws.isAlive === false) {
+          console.log(`Terminating inactive connection: ${ws.id}`);
+          return ws.terminate();
+      }
+      
+      ws.isAlive = false;
+      ws.ping(() => {});
+  });
+}, 15000); // каждые 15 секунд
+
+// Очистка интервала при закрытии сервера
+wss.on('close', () => {
+  clearInterval(interval);
 });
 
 const menuOptions = {
