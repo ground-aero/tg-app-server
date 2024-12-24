@@ -114,7 +114,7 @@ wss.on('close', () => {
 const menuOptions = {
   reply_markup: JSON.stringify({
     inline_keyboard: [
-      [{ text: "Чат", callback_data: "/chat" }],
+      [{ text: "Чат (real-time)", callback_data: "/chat" }],
       [{ text: "Погода", callback_data: "/weather" }],
       [{ text: "Прогноз", callback_data: "/forecast" }],
       [{ text: "Инфо", callback_data: "/info" }],
@@ -163,7 +163,7 @@ const start = async () => {
       if (text === "/info") {
         return bot.sendMessage(
           chatId,
-          `Сервисы приложения: \n 1. Чат \n 2. Погода \n 3. Прогноз погоды`,
+          `Сервисы приложения: \n 1. Чат (real-time)\n 2. Погода \n 3. Прогноз погоды`,
           {
             reply_markup: {
               inline_keyboard: [
@@ -195,7 +195,7 @@ const start = async () => {
       if (data === "/info") {
         return bot.sendMessage(
           chatId,
-          `Сервисы приложения: \n 1. Чат \n 2. Погода \n 3. Прогноз погоды`,
+          `Сервисы приложения: \n 1. Чат (real-time)\n 2. Погода \n 3. Прогноз погоды`,
           {
             reply_markup: {
               inline_keyboard: [
